@@ -1,18 +1,18 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id "com.github.ben-manes.versions" version "0.51.0"
+    id "com.github.ben-manes.versions" version "0.52.0"
 }
 
 group 'de.longri'
-version '1.0.1'
+version '1.1.0'
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    junitVersion = '5.11.0-M2'
+    junitVersion = '5.11.4'
 }
 
 
@@ -23,13 +23,15 @@ tasks.withType(JavaCompile) {
 
 dependencies {
 
-    implementation 'com.google.guava:guava:33.2.1-jre'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'org.jsoup:jsoup:1.17.2'
+    implementation 'com.google.guava:guava:33.4.0-jre'
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'org.jsoup:jsoup:1.19.1'
 
-    implementation 'org.apache.lucene:lucene-analyzers-common:8.11.3'
-    implementation 'org.apache.lucene:lucene-core:9.11.0'
-    implementation "org.apache.lucene:lucene-queryparser:9.11.0"
+    implementation 'org.apache.lucene:lucene-analyzers-common:8.11.4'
+    implementation 'org.apache.lucene:lucene-core:10.1.0'
+    implementation "org.apache.lucene:lucene-queryparser:10.1.0"
+    implementation "org.apache.lucene:lucene-backward-codecs:10.1.0"
+
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
@@ -41,6 +43,21 @@ test {
     useJUnitPlatform()
 }
 
+dependencyUpdates {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                // Schließt alle Abhängigkeiten aus, die mit 'org.openjfx' (JavaFX) beginnen
+                if (candidate.group == 'org.openjfx') {
+                    reject('JavaFX dependencies are excluded')
+                }
+                if (candidate.group == 'org.junit.jupiter') {
+                    reject('JUnit dependencies are excluded')
+                }
+            }
+        }
+    }
+}
 
 if (file('gradle.properties.local').exists()) {
     def props = new Properties()

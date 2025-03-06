@@ -35,7 +35,7 @@ public class NameSearcher extends Searcher {
     protected void setFoundDocs(org.apache.lucene.search.IndexSearcher searcher, ArrayList<Integer> foundDocs) throws IOException {
         indexes.clear();
         for (int sd : foundDocs) {
-            Document d = searcher.doc(sd);
+            Document d = searcher.storedFields().document(sd);
             indexes.add(d.get(SearchDokument.FIELD_NAME_NAME));
         }
     }
